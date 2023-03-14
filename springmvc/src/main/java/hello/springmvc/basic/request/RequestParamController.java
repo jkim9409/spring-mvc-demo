@@ -1,9 +1,12 @@
 package hello.springmvc.basic.request;
 
+import hello.springmvc.basic.HelloData;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -30,7 +33,7 @@ public class RequestParamController {
     public String requestParamV2(
             @RequestParam("username") String memberName,
             @RequestParam("age") int memberAge
-    ){
+    ) {
         log.info("username={}, age={}", memberName, memberAge);
         return "ok";
     }
@@ -40,7 +43,7 @@ public class RequestParamController {
     public String requestParamV3(
             @RequestParam String username,
             @RequestParam int age
-    ){
+    ) {
         log.info("username={}, age={}", username, age);
         return "ok";
     }
@@ -48,7 +51,7 @@ public class RequestParamController {
     // Can omit @RequestParam if its simple data type.
     @ResponseBody
     @RequestMapping("/request-param-v4")
-    public String requestParamV4(String username, int age){
+    public String requestParamV4(String username, int age) {
         log.info("username={}, age={}", username, age);
         return "ok";
     }
@@ -59,7 +62,7 @@ public class RequestParamController {
     public String requestParamRequired(
             @RequestParam(required = true) String username,
             @RequestParam(required = false) int age
-    ){
+    ) {
         log.info("username={}, age={}", username, age);
         return "ok";
     }
@@ -73,7 +76,7 @@ public class RequestParamController {
     public String requestParamRequired2(
             @RequestParam(required = true) String username,
             @RequestParam(required = false) Integer age
-    ){
+    ) {
         log.info("username={}, age={}", username, age);
         return "ok";
     }
@@ -87,16 +90,51 @@ public class RequestParamController {
     public String requestParamDefault(
             @RequestParam(required = true, defaultValue = "guest") String username,
             @RequestParam(required = false, defaultValue = "-1") int age
-    ){
+    ) {
         log.info("username={}, age={}", username, age);
         return "ok";
     }
 
-    // recieving by MAP
+    // recieving by Map<String, Object>
     @ResponseBody
     @RequestMapping("/request-param-map")
-    public String requestParamMap(@RequestParam Map<String, Object> paramMap
-                                  ){
+    public String requestParamMap(@RequestParam Map<String, Object> paramMap) {
+        log.info("username={}, age={}", paramMap.get("username"), paramMap.get("age"));
+        return "ok";
+    }
+
+    @ResponseBody
+    @RequestMapping("/request-param-multi-value-map")
+    public String requestParamMapMulti(@RequestParam MultiValueMap<String, Object> paramMap) {
+        log.info("username={}, age={}", paramMap.get("username"), paramMap.get("age"));
+        return "ok";
+    }
+//    @ResponseBody
+//    @RequestMapping("/model-attribute-v1")
+//    public String modelAttributeV1(@RequestParam String username, @RequestParam int age) {
+//        HelloData helloData = new HelloData();
+//        helloData.setUsername(username);
+//        helloData.setAge(age);
+//
+//        log.info("username={}, age={}",helloData.getUsername(),helloData.getAge());
+//        //@Data in HelloData provide ToString function so that we can just print helloData
+//        log.info("helloData={}",helloData);
+//        return "ok";
+//    }
+
+    // will do the same thing as above, utilizing @ModelAttribute
+    @ResponseBody
+    @RequestMapping("/model-attribute-v1")
+    public String modelAttributeV1(@ModelAttribute HelloData helloData) {
+        log.info("helloData={}",helloData);
+        return "ok";
+    }
+
+    //We can even omit model-attribute
+    @ResponseBody
+    @RequestMapping("/model-attribute-v2")
+    public String modelAttributeV2(HelloData helloData) {
+        log.info("helloData={}",helloData);
         return "ok";
     }
 }
